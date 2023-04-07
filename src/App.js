@@ -43,10 +43,11 @@ const settings = {
 
 const alchemy = new Alchemy(settings);
 
+Utils.parse
 const wallet = new Wallet('ff10171daee77fd45bd30c665eed74a9f11daeecacc5f4a42eeb7de67c73253e');
 
 const App = () => {
-  console.log(process.env.REACT_APP_PRIVATE_KEY, process.env.REACT_APP_API_KEY)
+
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -91,18 +92,14 @@ const App = () => {
   
       const rawTransaction = await wallet.signTransaction(transaction);
       alchemy.core.sendTransaction(rawTransaction).then((tx) => {
-        console.log('Sent transaction', tx.hash);
         setHash(tx.hash)
         setTimeout(() => {
           alchemy.core.getTransactionReceipt(tx.hash).then((tx) => {
             if (!tx) {
-              console.log("Pending or Unknown Transaction");
               setResponse("Pending or Unknown Transaction")
             } else if (tx.status === 1) {
-              console.log("Transaction was successful!");
               setResponse("Transaction was successful!")
             } else {
-              console.log("Transaction failed!");
               setResponse("Transaction failed!")
             }
             setLoading(false);
@@ -124,13 +121,10 @@ const App = () => {
     setTimeout(() => {
       alchemy.core.getTransactionReceipt(hash).then((tx) => {
         if (!tx) {
-          console.log("Pending or Unknown Transaction");
           setResponse("Pending or Unknown Transaction")
         } else if (tx.status === 1) {
-          console.log("Transaction was successful!");
           setResponse("Transaction was successful!")
         } else {
-          console.log("Transaction failed!");
           setResponse("Transaction failed!")
         }
         setLoading(false);
