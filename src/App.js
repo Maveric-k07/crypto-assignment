@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   CircularProgress,
@@ -43,11 +43,9 @@ const settings = {
 
 const alchemy = new Alchemy(settings);
 
-Utils.parse
 const wallet = new Wallet('ff10171daee77fd45bd30c665eed74a9f11daeecacc5f4a42eeb7de67c73253e');
 
 const App = () => {
-
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,6 +53,7 @@ const App = () => {
   const [Amount, setAmount] = useState('');
   const [response, setResponse] = useState('');
   const [hash, setHash] = useState('');
+  const [balance, setBalance] = useState('');
   const handleDialogOpen = () => {
     setOpen(true);
   };
@@ -70,6 +69,14 @@ const App = () => {
       </Backdrop>
     );
   };
+  const Tbalance =async () => {
+    const balance = await alchemy.core.getBalance(wallet.address);
+    const b = Utils.formatEther(balance)
+    setBalance(b);
+  }
+ useEffect(() => {
+  Tbalance();
+ }, [])
  
   async function sendTransaction() {
     setLoading(true);
@@ -92,14 +99,18 @@ const App = () => {
   
       const rawTransaction = await wallet.signTransaction(transaction);
       alchemy.core.sendTransaction(rawTransaction).then((tx) => {
+        console.log('Sent transaction', tx.hash);
         setHash(tx.hash)
         setTimeout(() => {
           alchemy.core.getTransactionReceipt(tx.hash).then((tx) => {
             if (!tx) {
+              console.log("Pending or Unknown Transaction");
               setResponse("Pending or Unknown Transaction")
             } else if (tx.status === 1) {
+              console.log("Transaction was successful!");
               setResponse("Transaction was successful!")
             } else {
+              console.log("Transaction failed!");
               setResponse("Transaction failed!")
             }
             setLoading(false);
@@ -121,10 +132,13 @@ const App = () => {
     setTimeout(() => {
       alchemy.core.getTransactionReceipt(hash).then((tx) => {
         if (!tx) {
+          console.log("Pending or Unknown Transaction");
           setResponse("Pending or Unknown Transaction")
         } else if (tx.status === 1) {
+          console.log("Transaction was successful!");
           setResponse("Transaction was successful!")
         } else {
+          console.log("Transaction failed!");
           setResponse("Transaction failed!")
         }
         setLoading(false);
@@ -172,6 +186,9 @@ const App = () => {
               Submit
             </Button>
           </Grid>
+          <Grid item xs={12}>
+            <Typography variant='h6' align='center' >{`Balance:  ${balance}`}</Typography>
+          </Grid>
         </Grid>
     </Container>
       {loading && (
@@ -181,15 +198,16 @@ const App = () => {
       <DialogTitle>Response</DialogTitle>
             <DialogContent>
               <Typography variant='h6' align='center'> {response === "Transaction was successful!"? (
-                <div style={{display: "flex", alignItems: "center"}}>
-                  <Check style={{color: "green", fontSize: "35px", paddingRight: "15px"}}/>
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <Check style={{color: "green", fontSize: "35px", paddingRight: "15px"}}/>
+                    {response}
+                  </div>
+                ):
+                (<div style={{display: "flex", alignItems: "center"}}>
+                  <Close style={{color: "red", fontSize: "35px", paddingRight: "15px"}}/>
                   {response}
-                </div>
-              ):
-              (<div style={{display: "flex", alignItems: "center"}}>
-                <Close style={{color: "red", fontSize: "35px", paddingRight: "15px"}}/>
-                {response}
-              </div>)}</Typography>
+                </div>)}
+              </Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleDialogClose} color="primary">
