@@ -201,12 +201,12 @@ const App = () => {
             <DialogContent>
               <Typography variant='h6' align='center'> {response === "Transaction was successful!"? (
                   <div style={{display: "flex", alignItems: "center"}}>
-                    < FaCheckCircle/>
+                    <FaCheckCircle color= "green" paddingRight= "10px" />
                     {response}
                   </div>
                 ):
                 (<div style={{display: "flex", alignItems: "center"}}>
-                  <GiCancel />
+                  <GiCancel  color= "red" paddingRight= "10px" />
                   {response}
                 </div>)}
               </Typography>
