@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { GiCancel } from "react-icons/gi";
+import { FaCheckCircle,} from "react-icons/fa";
 import {
   Button,
   CircularProgress,
@@ -13,8 +15,8 @@ import {
   Container,
   Typography,
 } from '@material-ui/core';
-import { Check, Close } from '@material-ui/icons'
 import { Alchemy, Network, Wallet, Utils } from 'alchemy-sdk';
+
 const useStyles = makeStyles((theme) => ({
   loading: {
     display: 'flex',
@@ -199,12 +201,12 @@ const App = () => {
             <DialogContent>
               <Typography variant='h6' align='center'> {response === "Transaction was successful!"? (
                   <div style={{display: "flex", alignItems: "center"}}>
-                    <Check style={{color: "green", fontSize: "35px", paddingRight: "15px"}}/>
+                    < FaCheckCircle/>
                     {response}
                   </div>
                 ):
                 (<div style={{display: "flex", alignItems: "center"}}>
-                  <Close style={{color: "red", fontSize: "35px", paddingRight: "15px"}}/>
+                  <GiCancel />
                   {response}
                 </div>)}
               </Typography>
